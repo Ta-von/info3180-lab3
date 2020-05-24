@@ -1,17 +1,38 @@
+ 
 """
 Flask Documentation:     http://flask.pocoo.org/docs/
 Jinja2 Documentation:    http://jinja.pocoo.org/2/documentation/
 Werkzeug Documentation:  http://werkzeug.pocoo.org/documentation/
 This file creates your application.
 """
-
+import os
 from app import app
 from flask import render_template, request, redirect, url_for, flash
+from app import mail
+from flask_mail import Message
+
+from app.forms import ContactForm
 
 
 ###
 # Routing for your application.
 ###
+
+@app.route('/contact', methods = ['GET','POST'])
+def contact():
+    form = ContactForm()
+    if request.method == 'POST':
+        name = form.Name.data
+        email = form.Email.data
+        subject = form.Subject.data
+        message = form.Message.data
+        msg = Message(subject, sender=(name,email),recipients=[" 8ebd143712-1aa526@inbox.mailtrap.io"])
+        flash('You have successfully filled out the form', 'success')
+        msg.body = message
+        mail.send(msg)
+        return render_template('home.html')
+    
+    return render_template('contact.html', form = form)
 
 @app.route('/')
 def home():
@@ -29,7 +50,6 @@ def about():
 # The functions below should be applicable to all Flask apps.
 ###
 
-
 # Flash errors from the form if validation fails
 def flash_errors(form):
     for field, errors in form.errors.items():
@@ -38,14 +58,11 @@ def flash_errors(form):
                 getattr(form, field).label.text,
                 error
             ), 'danger')
-
-
 @app.route('/<file_name>.txt')
 def send_text_file(file_name):
     """Send your static text file."""
     file_dot_text = file_name + '.txt'
     return app.send_static_file(file_dot_text)
-
 
 @app.after_request
 def add_header(response):

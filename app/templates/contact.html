@@ -1,0 +1,28 @@
+{% extends "base.html"%}
+
+{% block main %} 
+
+<div id = "container">
+ <form method="post" action="{{ url_for('contact') }}">
+        {{ form.csrf_token }}
+        <div class="form-group">
+            {{ form.Name.label}} <p>Please enter your full name.</p>{{ form.Name(class="form-control") }}
+
+        </div>
+        <div class="form-group">
+            {{ form.Email.label }} <p>Please enter your e-mail address.</p> {{ form.Email(class="form-control") }}
+
+        </div>
+        <div class="form-group">
+            {{ form.Subject.label }} <p>Please enter the subject for your message.</p> {{ form.Subject(class="form-control") }}
+
+        </div>
+        <div class="form-group">
+            {{ form.Message.label }} <p>Please enter the message you would like to send.</p>{{ form.Message(class="form-control") }}
+
+        </div>
+    <button type="submit" class="btn btn-primary">Send</button>
+</form>
+</div> 
+
+{% endblock %}.
